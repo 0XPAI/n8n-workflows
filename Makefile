@@ -17,13 +17,17 @@ logs:
 # docker-compose.yamlでホストの./workflows と ./credentialsがそれぞれコンテナの /home/node/workflows と /home/node/credentials にマウントされています。
 
 export-workflows:
-	$(COMPOSE_EXEC) npx n8n export:workflow --all --output=/home/node/workflows/
+	$(COMPOSE_EXEC) sh -c "mkdir -p /tmp/workflows && chmod -R +wr /tmp/workflows"
+	$(COMPOSE_EXEC) npx n8n export:workflow --backup --output=/tmp/workflows/
+	docker cp n8n:/tmp/workflows .
 
 import-workflows:
 	@for f in `find workflows -type f -name "*.json"`; do $(COMPOSE_EXEC) npx n8n import:workflow --input=/home/node/$$f; done
 
 export-credentials:
-	$(COMPOSE_EXEC) npx n8n export:credentials --all --output=/home/node/credentials/
+	$(COMPOSE_EXEC) sh -c "mkdir -p /tmp/credentials && chmod -R +wr /tmp/credentials"
+	$(COMPOSE_EXEC) npx n8n export:credentials --backup --output=/tmp/credentials/
+	docker cp n8n:/tmp/credentials .
 
 import-credentials:
 	@for f in `find credentials -type f -name "*.json"`; do $(COMPOSE_EXEC) npx n8n import:credentials --input=/home/node/$$f; done
