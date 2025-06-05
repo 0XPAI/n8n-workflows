@@ -1,6 +1,6 @@
 # n8n
-credentials/*
-workflows/*
+data/postgres/
+
 # Logs
 logs
 *.log

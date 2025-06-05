@@ -1,4 +1,4 @@
-.PHONY: up down logs export-workflows import-workflows export-credentials import-credentials import-all export-all
+.PHONY: up down logs export-workflows import-workflows export-credentials import-credentials import-all export-all reset-db
 
 # Docker Compose コマンド
 COMPOSE_EXEC = docker compose exec -T n8n
@@ -39,3 +39,10 @@ import-all:
 export-all:
 	make export-workflows
 	make export-credentials
+
+# Reset database command
+reset-db:
+	@echo "Reset database..."
+	docker compose exec postgres psql -U postgres -c "DROP DATABASE IF EXISTS n8n;"
+	docker compose exec postgres psql -U postgres -c "CREATE DATABASE n8n;"
+	docker compose exec postgres psql -U postgres -d n8n -f /data/sql/__initial__.sql
